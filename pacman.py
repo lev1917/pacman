@@ -12,6 +12,10 @@ def init_window():
 
 
 def draw_background(scr, img=None):
+    """
+
+    :rtype : object
+    """
     if img:
         scr.blit(img, (0, 0))
     else:
@@ -121,8 +125,12 @@ def process_events(events, packman):
                 packman.direction = 2
             elif event.key == K_SPACE:
                 packman.direction = 0
+class Wall(GameObject):
+    def __init__(self,x,y, tile_size, map_size):
+        GameObject.__init__(self, './resources/wall.png', x, y, tile_size, map_size)
 
-
+walls=[]
+Walls=[(3,4),(5,6)]
 if __name__ == '__main__':
     init_window()
     tile_size = 32
@@ -131,6 +139,9 @@ if __name__ == '__main__':
     pacman = Pacman(5, 5, tile_size, map_size)
     background = pygame.image.load("./resources/background.png")
     screen = pygame.display.get_surface()
+    for wall in Walls:
+        walls.append(Wall(wall[0],wall[1],tile_size,map_size))
+
 
     while 1:
         process_events(pygame.event.get(), pacman)
@@ -140,4 +151,20 @@ if __name__ == '__main__':
         draw_background(screen, background)
         pacman.draw(screen)
         ghost.draw(screen)
+
+        for wall in walls:
+            wall.draw(screen)
         pygame.display.update()
+class Map():
+    def __init__(self, x):
+                self.map = [ [list()]*x for i in range(x) ]
+
+
+    def get(self, x, y):
+                return self.map[x][y]
+    def moveTo(self, obj, new_x, new_y):
+            point = self.map[obj.x][obj.y]
+            if obj in point:
+                    point.remove(obj)
+                    self.map[new_x][new_y].append(obj)
+                    obj.set_ccord(new_x,new_y)
