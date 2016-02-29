@@ -53,6 +53,8 @@ def draw_background(scr, img=None):
         scr.blit(bg, (0, 0))
 
 
+
+
 class GameObject(pygame.sprite.Sprite):
     def __init__(self, img, x, y, tile_size, map_size):
         pygame.sprite.Sprite.__init__(self)
@@ -78,13 +80,13 @@ class GameObject(pygame.sprite.Sprite):
 
 class Point(GameObject):
     def __init__(self,x,y,title_size,map_size):
-        GameObject.__init__(self,'C:/Users/Home/PycharmProjects/pacman/point.ico',x,y,tile_size,map_size)
+        GameObject.__init__(self,'./resources/point.ico',x,y,tile_size,map_size)
         self.live=1
         self.Mx=int(x)
         self.My=int(y)
 class Ghost(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Home/PycharmProjects/pacman/ghost.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, './resources/ghost.png', x, y, tile_size, map_size)
         self.direction = 0
         self.velocity = 0.4
         self.pu=2
@@ -131,6 +133,13 @@ class Ghost(GameObject):
                             el.life-=1
                             self.x=xk
                             self.g()
+                        if isinstance(el, Wall):
+
+
+                                self.direction=0
+
+                                self.g()
+                                u=0
                 if u:
 
                    Map0.moveTo(self,int(xk),self.My)
@@ -160,7 +169,14 @@ class Ghost(GameObject):
                             el.life=-1
                             self.y=yk
                             self.g()
-                            u=1
+
+                        if isinstance(el, Wall):
+
+
+                                self.direction=0
+
+                                self.g()
+                                u=0
                 if u:
                    Map0.moveTo(self,self.Mx,int(yk))
                    self.y=yk
@@ -183,7 +199,13 @@ class Ghost(GameObject):
                             self.x=xk
 
                             self.g()
+                        if isinstance(el, Wall):
 
+
+                                self.direction=0
+
+                                self.g()
+                                u=0
                 if u:
                     Map0.moveTo(self,int(xk),self.My)
                     self.x=xk
@@ -212,7 +234,13 @@ class Ghost(GameObject):
                             el.life-=1
                             self.y=yk
                             self.g()
+                        if isinstance(el, Wall):
 
+
+                                self.direction=0
+
+                                self.g()
+                                u=0
                 if u:
 
 
@@ -234,7 +262,7 @@ class Ghost(GameObject):
         self.set_coord(self.x, self.y)
 class Pacman(GameObject):
     def __init__(self, x, y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Home/PycharmProjects/pacman/pacman.png', x, y, tile_size, map_size)
+        GameObject.__init__(self, './resources/pacman.png', x, y, tile_size, map_size)
         self.direction = 0
         self.velocity = 0.4
         self.life=2
@@ -250,7 +278,7 @@ class Pacman(GameObject):
     def game_tick(self):
         super(Pacman, self).game_tick()
         if self.direction==1:
-            self.image=pygame.image.load('C:/Users/Home/PycharmProjects/pacman/pacman.png')
+            self.image=pygame.image.load('./resources/pacman.png')
             u=1
             xk=self.x+self.velocity
             if self.Mx<map_size-1:
@@ -264,12 +292,15 @@ class Pacman(GameObject):
                             self.x=xk
                             self.g()
                         if isinstance(el, Wall):
-
-
+                            u=0
+                            if hasattr(el,'life'):
+                                self.direction=0
+                                el.life-=1
+                                Map0.remuwal(el)
+                            else:
                                 self.direction=0
 
                                 self.g()
-                                u=0
                         if isinstance(el,Point):
                             self.point+=1
                             el.live-=1
@@ -289,7 +320,7 @@ class Pacman(GameObject):
 
                 self.g()
         elif self.direction == 2:
-            self.image=pygame.image.load('C:/Users/Home/PycharmProjects/pacman/pacman_2.png')
+            self.image=pygame.image.load('./resources/pacman_2.png')
             yk=self.y+self.velocity
 
 
@@ -305,9 +336,15 @@ class Pacman(GameObject):
                             self.y=yk
                             u=0
                         if isinstance(el, Wall):
+                            u=0
+                            if hasattr(el,'life'):
+                                self.direction=0
+                                el.life-=1
+                                Map0.remuwal(el)
+                            else:
+                                self.direction=0
 
-                           self.direction=0
-                           u=0
+                                self.g()
                         if isinstance(el,Point):
                             self.point+=1
                             el.live-=1
@@ -324,7 +361,7 @@ class Pacman(GameObject):
             else:
                 self.y=15
         elif self.direction == 3:
-            self.image=pygame.image.load('C:/Users/Home/PycharmProjects/pacman/pacman_3.png')
+            self.image=pygame.image.load('./resources/pacman_3.png')
             xk=self.x-self.velocity
             if self.Mx>0:
                 u=1
@@ -338,9 +375,14 @@ class Pacman(GameObject):
                             self.x=xk
                             u=0
                         if isinstance(el, Wall):
-
+                            u=0
+                            if hasattr(el,'life'):
                                 self.direction=0
-                                u=0
+                                el.life-=1
+                                Map0.remuwal(el)
+                            else:
+                                self.direction=0
+
                                 self.g()
                         if isinstance(el,Point):
                             self.point+=1
@@ -363,7 +405,7 @@ class Pacman(GameObject):
                 self.g()
 
         elif self.direction == 4:
-            self.image=pygame.image.load('C:/Users/Home/PycharmProjects/pacman/pacman_4.png')
+            self.image=pygame.image.load('./resources/pacman_4.png')
             yk=self.y-self.velocity
             u=1
 
@@ -378,9 +420,14 @@ class Pacman(GameObject):
                             self.y=yk
                             u=0
                         if isinstance(el, Wall):
-
+                            u=0
+                            if hasattr(el,'life'):
                                 self.direction=0
-                                u=0
+                                el.life-=1
+                                Map0.remuwal(el)
+                            else:
+                                self.direction=0
+
                                 self.g()
                         if isinstance(el,Point):
                             self.point+=1
@@ -408,8 +455,13 @@ class Pacman(GameObject):
 
 class Wall(GameObject):
     def __init__(self,x,y, tile_size, map_size):
-        GameObject.__init__(self, 'C:/Users/Home/PycharmProjects/pacman/wall.png', x, y, tile_size, map_size)
-
+        GameObject.__init__(self, './resources/wall.png', x, y, tile_size, map_size)
+class D_Wall(Wall):
+    def __init__(self,x,y,tile_size,map_size):
+        GameObject.__init__(self,'./resources/destroyedwallwall.png',x,y,tile_size,map_size)
+        self.life=1
+        self.Mx=int(x)
+        self.My=int(y)
 
 def process_events(events, packman):
     for event in events:
@@ -428,7 +480,7 @@ def process_events(events, packman):
                 packman.direction = 0
 if __name__ == '__main__':
 
-    MAp = open('C:/Users/Home/PycharmProjects/pacman/MAP.txt', 'r')
+    MAp = open('./resources/MAP.txt', 'r')
     MAP=[]
     p=1
     GHs=[]
@@ -443,10 +495,11 @@ if __name__ == '__main__':
     tile_size = 32
     map_size = 16
     Map0=Map(map_size)
-    background = pygame.image.load("C:/Users/Home/PycharmProjects/pacman/background.png")
+    background = pygame.image.load("./resources/background.png")
     screen = pygame.display.get_surface()
     Walls=[]
     POint=[]
+    D_wall=[]
     print(MAP)
     g=1
     for i in range(len(MAP)):
@@ -494,6 +547,15 @@ if __name__ == '__main__':
           poi=Point(x,y,tile_size,map_size)
           POint.append(poi)
           Map0.put(x,y,poi)
+       if MAP[i]==',':
+          h=0
+          if i/16==16:
+                h=-1
+          x=i-16*(i//16)
+          y=i//16+h
+          dw=D_Wall(x,y,tile_size,map_size)
+          D_wall.append(dw)
+          Map0.put(x,y,dw)
     print(Map0.map)
     print(Walls)
     p=len(POint)
@@ -522,12 +584,14 @@ if __name__ == '__main__':
                 if poi.live>0:
                     poi.draw(screen)
 
-
+            for obj in D_wall:
+                if obj.life>0:
+                    obj.draw(screen)
             pygame.display.update()
 
     if pacman.life>0:
-        print('ПОБЕДА')
+        print('SPASE')
 
     else:
-        print('ЛУЗЕР')
+        print('LOSER')
     print(pacman.point,pacman.life)
